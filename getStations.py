@@ -1,4 +1,3 @@
- 
 import requests
 import json
 from pprint import pprint
@@ -12,7 +11,7 @@ def get_velib(url):
 
 def get_velib_Lyon(url):
     payload = {}
-    headers= {}
+    headers = {}
     response = requests.request("GET", url, headers=headers, data = payload)
     response_json = json.loads(response.text.encode('utf8'))
     return response_json.get("values", [])
