@@ -24,13 +24,13 @@ vRennes = get_velib("https://data.rennesmetropole.fr/api/records/1.0/search/?dat
 
 
 for vlille in vlilles:
-    pprint(vlille)
+    print(json.dumps(vlille), end=",\n" )
 
 for vParis_ in vParis:
-    pprint(vParis_)
+    print(json.dumps(vParis_),end=',\n')
 
 for vLyon_ in vLyon:
-    pprint(vLyon_)
+    print(json.dumps(vLyon_),end=',\n')
 
 for vRennes_ in vRennes:
-    pprint(vRennes_)
+    print(json.dumps(vRennes_),end=',\n')
