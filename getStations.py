@@ -83,7 +83,7 @@ print("Paris : " + str(len(vParis_format)))
 print("Lyon : " + str(len(vLyon_format)))
 print("Rennes : " + str(len(vRennes_format)))
 
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://toto:toto@cluster0.eu1pi.mongodb.net/vls?retryWrites=true&w=majority')
 db = client.vls  # or db = client['test-database']
 collection = db.stations  # or collection = db['test-collection']
 

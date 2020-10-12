@@ -8,7 +8,7 @@ import json
 from pprint import pprint
 from pymongo import MongoClient
 
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://toto:toto@cluster0.eu1pi.mongodb.net/vls?retryWrites=true&w=majority')
 db = client.vls # or db = client['test-database']
 collection_vlilles = db.vlilles # or collection = db['test-collection']
 
