@@ -1,1 +1,1 @@
-*/2 * * * * root run-parts /home/server/worker.py
+*/2 * * * * mongo-worker mongo-worker /home/server/worker.py
