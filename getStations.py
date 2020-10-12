@@ -43,3 +43,5 @@ print("inserted : " + str(len(collection.insert_many(vlilles).inserted_ids)))
 print("inserted : " + str(len(collection.insert_many(vParis).inserted_ids)))
 print("inserted : " + str(len(collection.insert_many(vLyon).inserted_ids)))
 print("inserted : " + str(len(collection.insert_many(vRennes).inserted_ids)))
+
+
