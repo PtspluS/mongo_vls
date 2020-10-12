@@ -18,17 +18,8 @@ vParis = get_velib("https://opendata.paris.fr/api/records/1.0/search/?dataset=ve
 vRennes = get_velib("https://data.rennesmetropole.fr/api/records/1.0/search/?dataset=stations_vls&q=&lang=fr&rows=-1")
 
 
-# for vlille in vlilles:
-#     print(json.dumps(vlille), end=",\n" )
-
-# for vParis_ in vParis:
-#     print(json.dumps(vParis_),end=',\n')
-
-# for vLyon_ in vLyon:
-#     print(json.dumps(vLyon_),end=',\n')
-
-# for vRennes_ in vRennes:
-#     print(json.dumps(vRennes_),end=',\n')
+# for vlib in vlilles + vParis + vLyon + vRennes:
+#     print(json.dumps(vlib), end=",\n" )
 
 print("Lille : "+ str(len(vlilles)))
 print("Paris : "+ str(len(vParis)))
