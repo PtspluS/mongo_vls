@@ -136,6 +136,6 @@ elif choix == 4:
 
 if choix == 5:
     # give all stations with a ratio bike/total_stand under 20% between 18h and 19h00 (monday to friday)
-    collection_vlilles.agregate
+    # TODO collection_vlilles
 else:
     pass
