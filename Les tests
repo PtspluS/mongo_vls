@@ -1,0 +1,41 @@
+db.getCollection('vlilles').aggregate([
+    {$match:{status: true}}, 
+    {$sort: {record_timestamp: -1}},
+    {$match:{ 
+        $or: [ 
+            { $and : [ { "record_timestamp" : { $lte : ISODate("2020-10-12 17:05:16.683Z")}} ,
+                       { "record_timestamp" : { $gte : ISODate("2020-10-12 17:02:16.263Z")}} ]
+            },{
+            $and : [ { "record_timestamp" : { $lte : ISODate("2020-10-12 17:01:16.683Z")}} ,
+                       { "record_timestamp" : { $gte : ISODate("2020-10-12 16:56:00.263Z")}} ]
+            }
+            ]
+    }},
+    {$project: 
+        {"_id":"$_id",
+           "name": "$name",
+            "total":{ $add: ["$vlilles_dispo", "$places_dispo"]} , 
+            "places_dispo" : "$places_dispo",
+            "vlilles_dispo" : "$vlilles_dispo",
+            "record_timestamp" : "$record_timestamp"
+   }},
+   {$match:{"total": {$gt: 0} }} , 
+   {$project: 
+        {"_id": "$_id", 
+            "name": "$name",
+            "total": "$total", 
+            "places_dispo" : "$places_dispo",
+            "vlilles_dispo" : "$vlilles_dispo",  
+            "percent" : {$divide: [ "$vlilles_dispo" , "$total" ]},
+            "record_timestamp" : "$record_timestamp"
+   }},
+   {$match:{"percent": {$lte: 0.2} }},
+   {$group: 
+        {"_id":"$name",
+           "entries" : {$push : {
+            "percent": "$percent",
+            "places_dispo" : "$places_dispo",
+            "vlilles_dispo" : "$vlilles_dispo",
+            "record_timestamp" : "$record_timestamp"}
+   }}},
+   ])
