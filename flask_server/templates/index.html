@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+    <title>Mongo Vls</title>
+</head>
+<body>
+    <header>
+    <form action="javascript:void()">
+        <input type="text" name="search" id="search">
+        <button onclick="searchstation();"> 
+            <i class="fas fa-search">
+            </i>
+        </button>
+    </form>
+    </header>
+
+    <div id="content"></div>
+
+    <script>
+        function searchstation(){
+            if(document.getElementsByName("search")[0].value != ''){
+            fetch("/station/"+ document.getElementsByName("search")[0].value).then(response =>{
+                response.text().then(text => document.getElementById("content"). innerHTML = text)
+            })
+            }
+        }
+    </script>
+
+</body>
+</html>
