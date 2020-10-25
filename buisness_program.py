@@ -6,6 +6,7 @@ import requests
 import json
 from pprint import pprint
 from pymongo import MongoClient, DESCENDING
+import dateutil.parser
 import re
 
 client = MongoClient(
@@ -137,5 +138,50 @@ elif choix == 4:
 if choix == 5:
     # give all stations with a ratio bike/total_stand under 20% between 18h and 19h00 (monday to friday)
     # TODO collection_vlilles
+    liste_staion = collection_vlilles.aggregate([
+        {"$match":{"status": True}},  # only look for the working stations
+        {"$sort": {"record_timestamp": DESCENDING}}, # sort by date 
+        {"$match":{    # time window to match 
+            "$or": [  # hardcoded time of two days because the worker did not work for ever
+                { "$and" : [ { "record_timestamp" : { "$lte" : dateutil.parser.parse("2020-10-12 17:05:16.683Z")}} ,
+                        { "record_timestamp" : { "$gte" : dateutil.parser.parse("2020-10-12 17:02:16.263Z")}} ]
+                },{
+                "$and" : [ { "record_timestamp" : { "$lte" : dateutil.parser.parse("2020-10-12 17:01:16.683Z")}} ,
+                        { "record_timestamp" : { "$gte" : dateutil.parser.parse("2020-10-12 16:56:00.263Z")}} ]
+                }
+                ]
+        }},
+        {"$project":  # Calculate the total of places can be done with an index I think but meh where is the fun
+            {"_id":"$_id",
+            "name": "$name",
+                "total":{ "$add": ["$vlilles_dispo", "$places_dispo"]} , 
+                "places_dispo" : "$places_dispo",
+                "vlilles_dispo" : "$vlilles_dispo",
+                "record_timestamp" : "$record_timestamp"
+    }},
+    {"$match":{"total": {"$gt": 0} }} , # avoid to get station with no total (cause blackhole later in the code /0)  
+    {"$project": # calculate the percentage of bickes
+            {"_id": "$_id", 
+                "name": "$name", 
+                "total": "$total", 
+                "places_dispo" : "$places_dispo",
+                "vlilles_dispo" : "$vlilles_dispo",  
+                "percent" : {"$divide": [ "$vlilles_dispo" , "$total" ]},
+                "record_timestamp" : "$record_timestamp"
+    }},
+    {"$match":{"percent": {"$lte": 0.2} }}, # Look for the 20%
+    {"$group":  # we groupe by station name in order to extract it and the time where it was at 20%
+            {"_id":"$name",
+            "entries" : {"$push" : {
+                "percent": "$percent",
+                "places_dispo" : "$places_dispo",
+                "vlilles_dispo" : "$vlilles_dispo",
+                "record_timestamp" : "$record_timestamp"}
+    }}},
+    {"$project": # only get the _id because it's the station name that match all the previous
+        { "_id":1 }},
+    ])
+    for station in liste_staion:
+        print(station["_id"])
 else:
     pass
