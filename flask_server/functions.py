@@ -27,6 +27,8 @@ def find_station(name_partial: str):
         l.append(i)
     return l
 
+def delete_station(id ):
+    collection_vlilles.delete_many({"_id": id})
 
 # loop over asking for a value bewteen range
 def input_range(min: int = 1, max: int = 5) -> int:
