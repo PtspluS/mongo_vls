@@ -89,7 +89,10 @@ client = MongoClient('mongodb+srv://toto:toto@cluster0.eu1pi.mongodb.net/vls?ret
 db = client.vls  # or db = client['test-database']
 collection = db.stations  # or collection = db['test-collection']
 
-collection.create_index({ "geo" : "2dsphere" })
+#collection.create_index({ "geo" : "2dsphere" })
+
+# CLEANING
+collection.delete_many({})
 
 print("inserted : " + str(len(collection.insert_many(vlilles_format).inserted_ids)))
 print("inserted : " + str(len(collection.insert_many(vParis_format).inserted_ids)))
