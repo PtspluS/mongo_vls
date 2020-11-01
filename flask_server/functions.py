@@ -27,8 +27,63 @@ def find_station(name_partial: str):
         l.append(i)
     return l
 
-def delete_station(id ):
-    collection_vlilles.delete_many({"_id": id})
+def find_station_geo(geojson):
+    requete = {
+        "city": re.compile("Lille", re.IGNORECASE),
+        "geo": {
+            "$geoWithin": {
+                "$geometry": geojson
+            }
+        }
+    }
+    cursor = collection_stations.find(requete)
+    print("{} stations match".format(
+        collection_stations.count_documents(requete)))
+    l: list = []
+    for i in cursor:
+        l.append(i)
+    return l
+
+
+def delete_station(name:str ):
+    collection_vlilles.delete_many({"name": name})
+    collection_stations.delete_many({"name": name})
+
+def toggle_stations(state: bool, geojson : dict):
+    geoquery = { 
+        "geo": {
+            "$geoWithin": {
+                "$geometry": geojson
+        }
+    }}
+    collection_stations.update_many(geoquery, {"$set": {"status": state}})
+    stationlist = []
+    for station in collection_stations.find(geoquery):
+        stationlist.append(station)
+    return stationlist
+
+
+def edit_station(id_station,station):
+    # Doesn't perform data sanitisation on user input
+    # DB update
+    collection_stations.update_one({"_id": id_station}, {
+                                "$set": station})
+
+
+def get_stations():
+    cursor = collection_stations.aggregate([
+    {"$match" :
+        {"city": re.compile("Lille", re.IGNORECASE)}
+    },
+    { "$project" : {
+        "name": "$name"
+        }
+    },])
+    l = []
+    for station in cursor :
+        l.append(station["name"])
+    return l
+
 
 # loop over asking for a value bewteen range
 def input_range(min: int = 1, max: int = 5) -> int:
