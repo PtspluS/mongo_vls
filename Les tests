@@ -38,4 +38,6 @@ db.getCollection('vlilles').aggregate([
             "vlilles_dispo" : "$vlilles_dispo",
             "record_timestamp" : "$record_timestamp"}
    }}},
+   {$project:
+      { "_id":1 }},
    ])
