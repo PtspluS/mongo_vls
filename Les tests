@@ -1,4 +1,5 @@
-db.getCollection('vlilles').aggregate([
+// db.getCollection('vlilles').aggregate(
+[
     {$match:{status: true}}, 
     {$sort: {record_timestamp: -1}},
     {$match:{ 
@@ -40,4 +41,4 @@ db.getCollection('vlilles').aggregate([
    }}},
    {$project:
       { "_id":1 }},
-   ])
+   ] // )
