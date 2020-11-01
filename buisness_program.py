@@ -136,8 +136,7 @@ elif choix == 4:
         pass
 
 if choix == 5:
-    # give all stations with a ratio bike/total_stand under 20% between 18h and 19h00 (monday to friday)
-    # TODO collection_vlilles
+    # give all stations with a ratio bike/total_stand under 20% between 18h and 19h00 (between two aribtrary dates)
     liste_staion = collection_vlilles.aggregate([
         {"$match":{"status": True}},  # only look for the working stations
         {"$sort": {"record_timestamp": DESCENDING}}, # sort by date 
