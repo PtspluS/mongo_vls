@@ -9,7 +9,13 @@ from pymongo import MongoClient, DESCENDING
 from bson.objectid import ObjectId
 from bson import json_util
 import dateutil.parser
+from datetime import timedelta, date
 import re
+
+
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(n)
 
 client = MongoClient(
     'mongodb+srv://toto:toto@cluster0.eu1pi.mongodb.net/vls?retryWrites=true&w=majority')
@@ -92,16 +98,18 @@ def get_stations():
 
 
 def get_station_with_percent_between_days_and_hours_and_the_name_of_this_function_is_too_long(start_day, end_day, start_time, end_time, percent=0.2):
-    print("NOPE")
+    start_day = date(int(start_day.split("-")[0]), int(start_day.split("-")[1]), int(start_day.split("-")[2]))
+    end_day = date(int(end_day.split("-")[0]), int(end_day.split("-")[1]), int(end_day.split("-")[2]))
+    
     request = [
         {"$match":{"status": True}},  # only look for the working stations
         {"$sort": {"record_timestamp": DESCENDING}}, # sort by date 
         {"$match":{    # time window to match 
             "$or": [  
                 # hardcoded time of two days because the worker did not work for ever
-                { "$and" : [ { "record_timestamp" : { "$lte" : dateutil.parser.parse(date+" "+ start_time + ".000Z")}} ,
-                        { "record_timestamp" : { "$gte" : dateutil.parser.parse(date+" "+ end_time +".000Z")}} ]
-                } for date in range(start_day, end_day)
+                { "$and" : [ { "record_timestamp" : { "$lte" : dateutil.parser.parse(jour.strftime("%Y-%m-%d")+" "+ end_time + ":16.683Z")}} ,
+                        { "record_timestamp" : { "$gte" : dateutil.parser.parse(jour.strftime("%Y-%m-%d")+" "+ start_time +":16.263Z")}} ]
+                } for jour in daterange(start_day, end_day)
                 ]
         }},
         {"$project":  # Calculate the total of places can be done with an index I think but meh where is the fun
@@ -122,7 +130,7 @@ def get_station_with_percent_between_days_and_hours_and_the_name_of_this_functio
                 "percent" : {"$divide": [ "$vlilles_dispo" , "$total" ]},
                 "record_timestamp" : "$record_timestamp"
     }},
-    {"$match":{"percent": {"$lte": percent} }}, # Look for the percentage
+    {"$match":{"percent": {"$lte": float(percent)} }}, # Look for the percentage
     {"$group":  # we groupe by station name in order to extract it and the time where it was at 20%
             {"_id":"$name",
             "entries" : {"$push" : {
@@ -136,7 +144,8 @@ def get_station_with_percent_between_days_and_hours_and_the_name_of_this_functio
     ]
     liste_station = collection_vlilles.aggregate(request)
     l = []
-    pprint(request)
+    # pprint(request)
     for station in liste_station:
+        # print(station)
         l.append(station["_id"])
     return l

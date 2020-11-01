@@ -10,6 +10,10 @@ app = Flask("mongo_vls")
 def hello_world():
     return render_template('index.html', stations=get_stations())
 
+@app.route('/js.js')
+def js():
+    return render_template('js.js')
+
 
 @app.route('/station/<stationname>',  methods=['GET', 'POST'])
 def findstation(stationname):
@@ -52,8 +56,8 @@ def editstation(id_station):
      
 @app.route('/ultra/<startday>/<endday>/<startime>/<endtime>/<percent>')
 def ultra(startday, endday, startime, endtime, percent = 0.2):
-    #  get_station_with_percent_between_days_and_hours_and_the_name_of_this_function_is_too_long
-    return "", 204
+    stations = get_station_with_percent_between_days_and_hours_and_the_name_of_this_function_is_too_long(startday, endday, startime, endtime, percent)
+    return render_template("liste.html", liste=stations)
 
 
 if __name__ == '__main__':
