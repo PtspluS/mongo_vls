@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from markupsafe import escape
-from functions import get_stations,find_station, delete_station, toggle_stations, edit_station, find_station_geo
+from functions import get_stations,find_station, delete_station, toggle_stations, edit_station, find_station_geo, \
+    get_station_with_percent_between_days_and_hours_and_the_name_of_this_function_is_too_long, get_station
 import pandas as pd
 
 app = Flask("mongo_vls")
@@ -12,7 +13,6 @@ def hello_world():
 
 @app.route('/station/<stationname>',  methods=['GET', 'POST'])
 def findstation(stationname):
-    print(request.method == 'POST')
     if request.method == 'POST':
         # find station with geoquery
         geojson = request.get_json()
@@ -20,6 +20,10 @@ def findstation(stationname):
         return render_template("view_station_list.html", stations=find_station_geo(geojson))
     else :
         return render_template("view_station_list.html", stations=find_station(escape(stationname)))
+
+@app.route('/getstation/<id>')
+def getstation(id):
+    return get_station(escape(id))
 
 
 @app.route('/delete/<id_station>')
@@ -43,12 +47,13 @@ def toggle_station(state):
 @app.route('/edit/<id_station>', methods=['POST'])
 def editstation(id_station):
     station = request.get_json()
-    # print(geojson)
     edit_station(id_station,station)
-    # print(stations)
     return "", 204
      
-
+@app.route('/ultra/<startday>/<endday>/<startime>/<endtime>/<percent>')
+def ultra(startday, endday, startime, endtime, percent = 0.2):
+    #  get_station_with_percent_between_days_and_hours_and_the_name_of_this_function_is_too_long
+    return "", 204
 
 
 if __name__ == '__main__':

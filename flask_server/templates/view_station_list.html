@@ -1,0 +1,50 @@
+
+<table class="table table-striped table-bordered">
+<thead class="thead-dark">
+<tr>
+{% for field in stations[0] %}
+    {%if field != "_id"%}
+    <th>
+      {{field}}
+    </th>
+    {% endif %}
+{%endfor%}
+    <th> edit </th>
+    <th> delete </th>
+</tr>
+</thead>
+
+
+{% for station in stations %}
+   <tr>
+    {% for field in station %}
+        {%if field == "_id"%}
+        {% elif field == "geo" %}
+        <td>
+            <a href="https://www.google.com/maps/search/?z=15&t=k&q={{station[field]["coordinates"][1]}}+{{station[field]["coordinates"][0]}}"> view </a>
+        </td>
+        {% elif field == "status" %}
+        <td>
+            <i class="{%if station[field] %} fas  {%else%} far  {%endif%}fa-lightbulb"></i>
+        </td>
+        {%else%}
+        <td>
+            {{station[field]}}
+        </td>
+        {%endif%}
+    {%endfor%}    
+    <td>
+    
+        <button onclick='editstation("{{station["_id"]}}")' data-toggle="modal" data-target="#editModal"> <i class="fas fa-edit"></i> </button>
+    </td>
+    <td>
+        <button onclick='fetch("/delete/{{station["name"]}}").then(()=>toast("Delete done", "refresh"))'> <i class="fas fa-trash-alt"> </i> </button>
+    </td>
+
+   </tr>
+
+{% else %}
+    <h2> no station found </h2>
+{%endfor%}
+</table>
+
